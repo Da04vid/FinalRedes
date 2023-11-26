@@ -1,0 +1,22 @@
+#tablaContenedor {
+    max-height: 300px; 
+    overflow-y: auto;
+    border: 1px solid #ddd; /* Añade un contorno a la tabla */
+}
+
+#tablaDatos {
+    width: 100%; /* Haz que la tabla ocupe el 100% del ancho del contenedor */
+    border-collapse: collapse; /* Combina los bordes de las celdas */
+}
+
+#tablaDatos th, #tablaDatos td {
+    border: 1px solid #ddd; /* Añade un contorno a las celdas */
+    padding: 8px; /* Ajusta el relleno de las celdas según sea necesario */
+    text-align: center; /* Centra el contenido de las celdas */
+}
+
+#tablaDatos th {
+    position: sticky;
+    top: 0;
+    background-color: #f2f2f2; /* Añade un fondo gris a los títulos de las columnas */
+}

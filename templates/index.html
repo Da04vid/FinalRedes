@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfica Lineal</title>
+    <!-- Incluye la biblioteca Chart.js -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='estilos.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Sensor Gas</h1>
+    <!-- Div para la gráfica -->
+    <div style="width: 80%; margin: auto;">
+        <canvas id="lineChart"></canvas>
+    </div>
+    <div id="tablaContenedor">
+        <table id="tablaDatos">
+            <thead>
+                <tr>
+                    <th>Numero</th>
+                    <th>Hora</th>
+                    <th>Datos Sensor de Gas</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpoTabla">
+                <!-- Aquí se agregarán las filas de datos -->
+            </tbody>
+        </table>   
+    </div>   
+    <h1>Sensor humedad</h1>
+    <H2>Calidad del aire: </h3>
+    <p id="Humedad"></p>
+    <p id="Temperatura"></p>
+    <p id="Indicador"></p>
+    <!-- Script para cargar y actualizar la gráfica -->
+    <script src="/static/app.js"></script>
+</body>
+</html>

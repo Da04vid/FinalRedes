@@ -30,8 +30,26 @@ document.addEventListener('DOMContentLoaded', function () {
     // Maneja eventos de Server-Sent Events
     var eventoSource = new EventSource('/datos');
     eventoSource.onmessage = function (event) {
+        //aqui desencriptar
+        //npm install crypto-js
+        const CryptoJS = require('crypto-js');
         var datos = event.data;
-        var datos2 = datos.replace(/'/g, '"')
+        const key = 'mysecretpassword1';
+        const iv = 'mysecretpassword2';
+
+        // Decodificación desde Base64
+        const ct = Buffer.from(datos, 'base64');
+
+        // Configuración para desencriptar usando AES
+        const decrypted = CryptoJS.AES.decrypt(
+            { ciphertext: CryptoJS.enc.Hex.parse(ct.toString('hex')) },
+                CryptoJS.enc.Utf8.parse(key),
+            { iv: CryptoJS.enc.Utf8.parse(iv) }
+        );
+
+        // Convertir de string a JSON
+        const decryptedJson = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
+        var datos2 = decryptedJson.replace(/'/g, '"')
         var datosjson = JSON.parse(datos2)
         actualizarGrafica(lineChart, datosjson.gas);
         actualizarHumedad(datosjson.calidad.H);

@@ -1,6 +1,12 @@
 from flask import Flask, render_template, jsonify, Response
 import ast
 import serial
+#pip install cryptography
+import json
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import padding
+import base64
 
 app = Flask(__name__)
 
@@ -19,7 +25,23 @@ def obtener_datos():
                     calidad[2].split(":")[0] : calidad[2].split(":")[1]
                 }
             }
-        yield 'data: {}\n\n'.format(data)
+        #pasamos el json a un string
+        json_str = json.dumps(data).encode('utf-8')
+        #Clave y vector para la inicializacion de AES
+        key = b"mysecretpassword1"
+        iv = b"mysecretpassword2"
+        #paddind del mensaje
+        padder = padding.PKCS7(algorithms.AES.block_size).padder()
+        padded_data = padder.update(json_str) + padder.finalize()
+        #consfiguracion del cifrado AES
+        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
+        #creacion del encriptador
+        encryptor = cipher.encryptor()
+        #encriptacion del mensaje
+        ct = encryptor.update(padded_data) + encryptor.finalize()
+        #codificacion en Base64 para transferencia
+        encrypted_message = base64.b64encode(ct).decode('utf-8')
+        yield 'data: {}\n\n'.format(encrypted_message)
     except Exception as e:
         print(f"Error al leer datos desde COM3: {e}")
 

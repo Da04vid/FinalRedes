@@ -36,8 +36,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var datos = event.data;
         const key = 'mysecretpassword1';
         const iv = 'mysecretpassword2';
-
-        // Decodificación desde Base64
+ 
+        // Decod ificación desde Base64
         const ct = Buffer.from(datos, 'base64');
 
         // Configuración para desencriptar usando AES

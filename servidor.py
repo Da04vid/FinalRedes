@@ -13,33 +13,48 @@ app = Flask(__name__)
 
 def obtener_datos():
     try:
-        ser = serial.Serial('COM3', 9600)
-        line = ser.readline().decode('utf-8').strip()
-        data = line.split("/")
-        gas = data[0].split(",")[1]
-        calidad = data[1].split(",")[1].split("-")
-        data = {"gas":gas,
-                "calidad":{
-                    calidad[0].split(":")[0] : calidad[0].split(":")[1],
-                    calidad[1].split(":")[0] : calidad[1].split(":")[1],
-                    calidad[2].split(":")[0] : calidad[2].split(":")[1]
-                }
+        # ser = serial.Serial('COM3', 9600)
+        # line = ser.readline().decode('utf-8').strip()
+        # data = line.split("/")
+        # gas = data[0].split(",")[1]
+        # calidad = data[1].split(",")[1].split("-")
+        # data = {"gas":gas,
+        #         "calidad":{
+        #             calidad[0].split(":")[0] : calidad[0].split(":")[1],
+        #             calidad[1].split(":")[0] : calidad[1].split(":")[1],
+        #             calidad[2].split(":")[0] : calidad[2].split(":")[1]
+        #         }
+        #     }
+        data = {
+            "gas": 1,
+            "calidad": {
+                "H": 28.6,
+                "T": 18.7,
+                "I": 20
             }
-        #pasamos el json a un string
+        }
+
+        # Convertir el JSON a un string
         json_str = json.dumps(data).encode('utf-8')
-        #Clave y vector para la inicializacion de AES
+
+        # Clave y vector para la inicialización de AES
         key = b"mysecretpassword1"
         iv = b"mysecretpassword2"
-        #paddind del mensaje
+
+        # Padding del mensaje
         padder = padding.PKCS7(algorithms.AES.block_size).padder()
         padded_data = padder.update(json_str) + padder.finalize()
-        #consfiguracion del cifrado AES
-        cipher = Cipher(algorithms.AES(key), modes.CBC(iv), backend=default_backend())
-        #creacion del encriptador
+
+        # Configuración del cifrado AES con una clave de 128 bits
+        cipher = Cipher(algorithms.AES(key[:16]), modes.CBC(iv[:16]), backend=default_backend())
+
+        # Creación del encriptador
         encryptor = cipher.encryptor()
-        #encriptacion del mensaje
+
+        # Encriptación del mensaje
         ct = encryptor.update(padded_data) + encryptor.finalize()
-        #codificacion en Base64 para transferencia
+
+        # Codificación en Base64 para transferencia
         encrypted_message = base64.b64encode(ct).decode('utf-8')
         yield 'data: {}\n\n'.format(encrypted_message)
     except Exception as e:

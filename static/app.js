@@ -32,29 +32,35 @@ document.addEventListener('DOMContentLoaded', function () {
     eventoSource.onmessage = function (event) {
         //aqui desencriptar
         //npm install crypto-js
-        const CryptoJS = require('crypto-js');
-        var datos = event.data;
+        var encryptedMessage = event.data;
+        console.log(encryptedMessage)
         const key = 'mysecretpassword1';
         const iv = 'mysecretpassword2';
  
-        // Decod ificación desde Base64
-        const ct = Buffer.from(datos, 'base64');
+        // Decodificar el mensaje en Base64
+        const ciphertext = CryptoJS.enc.Base64.parse(encryptedMessage);
 
-        // Configuración para desencriptar usando AES
-        const decrypted = CryptoJS.AES.decrypt(
-            { ciphertext: CryptoJS.enc.Hex.parse(ct.toString('hex')) },
-                CryptoJS.enc.Utf8.parse(key),
-            { iv: CryptoJS.enc.Utf8.parse(iv) }
+        // Configuración del descifrado AES
+        const decipher = CryptoJS.AES.decrypt(
+            encryptedMessage,
+            CryptoJS.enc.Utf8.parse(key),
+            {
+                iv: CryptoJS.enc.Utf8.parse(iv),
+                mode: CryptoJS.mode.CBC,
+                padding: CryptoJS.pad.Pkcs7
+            }
         );
 
+        // Obtener el texto descifrado
+        const decryptedMessage = CryptoJS.enc.Utf8.stringify(decipher);
+        console.log(decryptedMessage)
         // Convertir de string a JSON
-        const decryptedJson = JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
-        var datos2 = decryptedJson.replace(/'/g, '"')
-        var datosjson = JSON.parse(datos2)
-        actualizarGrafica(lineChart, datosjson.gas);
-        actualizarHumedad(datosjson.calidad.H);
-        actualizarTemperatura(datosjson.calidad.T);
-        actualizarIndicador(datosjson.calidad.I);
+        var datos2 = decryptedMessage.replace(/'/g, '"')
+        // var datosjson = JSON.parse(datos2)
+        // actualizarGrafica(lineChart, datosjson.gas);
+        // actualizarHumedad(datosjson.calidad.H);
+        // actualizarTemperatura(datosjson.calidad.T);
+        // actualizarIndicador(datosjson.calidad.I);
     };
 
     // Función para actualizar la gráfica y la tabla

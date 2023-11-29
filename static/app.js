@@ -30,38 +30,16 @@ document.addEventListener('DOMContentLoaded', function () {
     // Maneja eventos de Server-Sent Events
     var eventoSource = new EventSource('/datos');
     eventoSource.onmessage = function (event) {
-        //aqui desencriptar
-        //npm install crypto-js
-        var encryptedMessage = event.data;
-        console.log(encryptedMessage)
-        const key = 'mysecretpassword1';
-        const iv = 'mysecretpassword2';
- 
-        // Decodificar el mensaje en Base64
-        const ciphertext = CryptoJS.enc.Base64.parse(encryptedMessage);
-
-        // Configuración del descifrado AES
-        const decipher = CryptoJS.AES.decrypt(
-            encryptedMessage,
-            CryptoJS.enc.Utf8.parse(key),
-            {
-                iv: CryptoJS.enc.Utf8.parse(iv),
-                mode: CryptoJS.mode.CBC,
-                padding: CryptoJS.pad.Pkcs7
-            }
-        );
-
-        // Obtener el texto descifrado
-        const decryptedMessage = CryptoJS.enc.Utf8.stringify(decipher);
-        console.log(decryptedMessage)
-        // Convertir de string a JSON
-        var datos2 = decryptedMessage.replace(/'/g, '"')
-        // var datosjson = JSON.parse(datos2)
-        // actualizarGrafica(lineChart, datosjson.gas);
-        // actualizarHumedad(datosjson.calidad.H);
-        // actualizarTemperatura(datosjson.calidad.T);
-        // actualizarIndicador(datosjson.calidad.I);
+        var datos = event.data;
+        var datos2 = datos.replace(/'/g, '"')
+        var datosjson = JSON.parse(datos2)
+        actualizarGrafica(lineChart, datosjson.gas);
+        actualizarHumedad(datosjson.calidad.H);
+        actualizarTemperatura(datosjson.calidad.T);
+        actualizarIndicador(datosjson.calidad.I);
+        actualizarDatosE(event.data.encrypted_data);
     };
+
 
     // Función para actualizar la gráfica y la tabla
     function actualizarGrafica(chart, datos) {
@@ -126,4 +104,8 @@ document.addEventListener('DOMContentLoaded', function () {
     function actualizarIndicador(dato) {
         document.getElementById('Indicador').textContent = 'Indicador: ' + dato;
     }
+    function actualizarDatosE(dato) {
+        document.getElementById('datose').textContent = dato;
+    }
+
 });

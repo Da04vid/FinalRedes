@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        #info-box {
+            border: 1px solid #ccc;
+            margin: 10px;
+            max-height: 70vh;  /* Altura máxima del 70% del viewport height */
+            overflow-y: auto;  /* Aparecerá un scroll vertical si es necesario */
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        td:nth-child(1) {
+            max-width: 50px;  /* Ajusta el ancho máximo de la columna de número según sea necesario */
+        }
+
+        td:nth-child(2) {
+            max-width: 300px;  /* Ajusta el ancho máximo de la columna de texto según sea necesario */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+
+<div id="info-box">
+    <table id="info-table">
+        <!-- Encabezados de la tabla -->
+        <tr>
+            <th>Número</th>
+            <th>Texto</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    let llamadaNumero = 1;  // Inicializar el contador de llamadas
+
+    function actualizarInformacion() {
+        fetch('/datosEncrypt')
+            .then(response => response.text())
+            .then(data => {
+                // Crear una nueva fila con el número y el texto recibido
+                const newRow = `<tr><td>${llamadaNumero}</td><td>${data}</td></tr>`;
+                llamadaNumero++;  // Incrementar el contador de llamadas
+
+                // Agregar la nueva fila al final de la tabla
+                document.getElementById('info-table').innerHTML += newRow;
+
+                // Ajustar el scroll para mostrar la última fila
+                document.getElementById('info-box').scrollTop = document.getElementById('info-box').scrollHeight;
+            })
+            .catch(error => console.error('Error al obtener datos:', error));
+    }
+
+    setInterval(actualizarInformacion, 5000);
+    actualizarInformacion();
+</script>
+
+</body>
+</html>
